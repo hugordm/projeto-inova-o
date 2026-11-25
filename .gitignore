@@ -1,0 +1,7 @@
+node_modules
+.next
+.env*
+# O exemplo não tem segredos e deve ir para o repositório
+!.env.example
+next-env.d.ts
+*.tsbuildinfo

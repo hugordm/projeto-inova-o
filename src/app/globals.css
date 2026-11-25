@@ -1,0 +1,304 @@
+/* Cores em variáveis para trocar em um lugar só. */
+:root {
+  --azul: #0f3460;
+  --verde: #7ee23a;
+  --fundo: #f4f6fa;
+  --texto: #1c2333;
+  --cinza: #6b7280;
+  --borda: #dde2ea;
+  --vermelho: #c0392b;
+  --amarelo: #d4a017;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  line-height: 1.5;
+}
+
+.faixa {
+  background: var(--azul);
+  color: #fff;
+  text-align: center;
+  padding: 8px 16px;
+  font-size: 14px;
+  border-bottom: 4px solid var(--verde);
+}
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+h1 {
+  color: var(--azul);
+  margin: 0 0 4px;
+}
+
+.subtitulo {
+  color: var(--cinza);
+  margin: 0 0 20px;
+}
+
+.cartao {
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+label {
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+select,
+textarea {
+  width: 100%;
+  font: inherit;
+  padding: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: #fff;
+  color: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.contador {
+  text-align: right;
+  font-size: 12px;
+  color: var(--cinza);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 400;
+}
+
+.exemplos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.exemplos span {
+  color: var(--cinza);
+  font-size: 14px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.botao-principal {
+  margin-top: 12px;
+  background: var(--azul);
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.botao-principal:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.botao-secundario {
+  background: #fff;
+  color: var(--azul);
+  border: 1px solid var(--azul);
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.botao-secundario:hover {
+  background: var(--verde);
+  border-color: var(--verde);
+}
+
+.erro {
+  color: var(--vermelho);
+  margin: 4px 0 0;
+}
+
+.resumo {
+  color: var(--azul);
+  margin: 28px 0 12px;
+}
+
+.lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-left: 6px solid var(--cinza);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.item-respondido { border-left-color: var(--verde); }
+.item-ambiguo { border-left-color: var(--amarelo); }
+.item-ausente { border-left-color: var(--vermelho); }
+.item-nao_confirmado { border-left-color: var(--azul); }
+
+.item-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.selo {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.selo-respondido { background: var(--verde); color: var(--azul); }
+.selo-ambiguo { background: #fdf3d0; color: #7a5b00; }
+.selo-ausente { background: #fde2df; color: var(--vermelho); }
+.selo-nao_confirmado { background: var(--azul); color: #fff; }
+
+.pergunta {
+  margin: 6px 0 0;
+  color: var(--cinza);
+  font-style: italic;
+}
+
+.explicacao {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+blockquote {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  background: var(--fundo);
+  border-left: 3px solid var(--borda);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Citação inventada aparece riscada: o código não confia nela. */
+blockquote.riscada {
+  text-decoration: line-through;
+  color: var(--cinza);
+}
+
+.fonte {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--cinza);
+}
+
+/* Selo do modo usado na análise (IA, palavras-chave ou fallback). */
+.modo {
+  display: inline-block;
+  margin: 24px 0 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid var(--borda);
+  background: #fff;
+  color: var(--azul);
+}
+
+.modo-ia {
+  border-color: var(--verde);
+}
+
+.modo-fallback-sem-ia {
+  border-color: var(--amarelo);
+}
+
+/* Aviso curto, por exemplo quando a IA falhou e usamos a análise sem IA. */
+.aviso {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 4px solid var(--amarelo);
+  background: #fff8e1;
+  font-size: 14px;
+}
+
+/* Selos lado a lado: o da máquina e, se houver, o da decisão humana. */
+.selos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.selo-humano {
+  background: #fff;
+  color: var(--azul);
+  border: 1px dashed var(--azul);
+}
+
+/* Frase-modelo sugerida para itens ausentes. */
+.modelo {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  background: var(--fundo);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.modelo-rotulo {
+  font-size: 13px;
+  color: var(--cinza);
+}
+
+.modelo code {
+  font-family: inherit;
+  font-size: 15px;
+}
+
+/* Botões da decisão humana. */
+.decisao {
+  margin: 10px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.botao-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--azul);
+  text-decoration: underline;
+  font-size: 14px;
+  cursor: pointer;
+}
