@@ -241,7 +241,7 @@ export default function Pagina() {
             <input
               type="checkbox"
               checked={usarIA && !simular}
-              disabled={!iaDisponivel || simular}
+              disabled={!iaDisponivel} // só trava se a IA não estiver configurada no servidor
               onChange={(e) => {
                 setUsarIA(e.target.checked);
                 if (e.target.checked) setSimular(false); // marcar IA desliga a demonstração
@@ -249,7 +249,6 @@ export default function Pagina() {
             />
             Usar IA
             {iaDisponivel === false && " (indisponível: IA não configurada no servidor)"}
-            {iaDisponivel && simular && " (desligada no modo demonstração)"}
           </label>
 
           {/* As duas opções são exclusivas só na tela; a API continua aceitando as duas juntas. */}
