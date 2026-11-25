@@ -43,6 +43,12 @@ const ROTULO_MODO: Record<Modo, string> = {
   "fallback-sem-ia": "Análise por palavras-chave (a IA falhou)",
 };
 
+// Estado do "Sugerir versão revisada": pedindo, prévia pronta ou aviso.
+type Reescrita =
+  | { etapa: "carregando" }
+  | { etapa: "previa"; original: string; sugerido: string }
+  | { etapa: "aviso"; mensagem: string };
+
 const NOMES_TIPO: Record<Tipo, string> = {
   digital: "Produto digital",
   fisico: "Produto físico",
@@ -63,6 +69,7 @@ export default function Pagina() {
   const [aviso, setAviso] = useState<string | null>(null);
   // Decisões da pessoa por id do item. Ficam só na tela: não vão para a API.
   const [decisoes, setDecisoes] = useState<Record<string, Decisao>>({});
+  const [reescrita, setReescrita] = useState<Reescrita | null>(null);
 
   // Ao abrir a página, pergunta ao servidor se há IA; se houver, marca "Usar IA".
   useEffect(() => {
@@ -83,6 +90,7 @@ export default function Pagina() {
     setModo(null);
     setAviso(null);
     setDecisoes({});
+    setReescrita(null);
   }
 
   // Acrescenta a frase-modelo ao fim da caixa de texto, sem passar do limite.
@@ -94,6 +102,28 @@ export default function Pagina() {
     }
     setErro(null);
     setTexto(novo);
+  }
+
+  // Pede ao servidor uma versão completa do texto, com as frases-modelo dos itens faltantes.
+  // Nada muda na caixa de texto até a pessoa clicar em "Usar esta versão".
+  async function sugerirVersao(itemIds: string[]) {
+    const original = texto;
+    setReescrita({ etapa: "carregando" });
+    try {
+      const resp = await fetch("/api/reescrever", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tipo, texto: original, itemIds }),
+      });
+      const dados = await resp.json();
+      if (resp.ok && typeof dados.texto === "string") {
+        setReescrita({ etapa: "previa", original, sugerido: dados.texto });
+      } else {
+        setReescrita({ etapa: "aviso", mensagem: dados.aviso ?? dados.erro ?? "Não foi possível sugerir." });
+      }
+    } catch {
+      setReescrita({ etapa: "aviso", mensagem: "Não foi possível falar com o servidor." });
+    }
   }
 
   // Registra (ou desfaz, com null) a decisão humana de um item.
@@ -130,6 +160,7 @@ export default function Pagina() {
       }
       setResultado(dados.resultado);
       setDecisoes({}); // resultado novo: decisões antigas não valem mais
+      setReescrita(null);
       setModo(dados.modo ?? null);
       setAviso(dados.aviso ?? null);
     } catch {
@@ -145,11 +176,20 @@ export default function Pagina() {
     : 0;
   // Só campos vindos das frases-modelo bloqueiam; "[2026]" escrito pelo vendedor, não.
   const abertos = camposDeModeloAbertos(texto);
+  // Itens que entram na versão revisada: ausentes e ambíguos,
+  // menos os que a pessoa já marcou como respondidos.
+  const faltantes =
+    resultado
+      ?.filter((r) => r.status === "ausente" || r.status === "ambiguo")
+      .filter((r) => decisoes[r.item.id] !== "respondido")
+      .map((r) => r.item.id) ?? [];
   const bloqueado = abertos.length > 0;
 
   return (
     <>
-      <div className="faixa">Passo 2: análise com IA (ou por palavras-chave). Dados e regras de exemplo.</div>
+      <div className="faixa">
+        Protótipo de demonstração. Dados e regras de exemplo; as fontes de cada item estão indicadas.
+      </div>
 
       <main className="container">
         <header>
@@ -236,6 +276,8 @@ export default function Pagina() {
             <ul className="lista">
               {resultado.map((r) => {
                 const decisao = pedeDecisao(r.status) ? decisoes[r.item.id] : undefined;
+                // Itens ausentes e ambíguos mostram a frase-modelo fixa para completar o texto.
+                const mostraModelo = r.status === "ausente" || r.status === "ambiguo";
                 return (
                 <li key={r.item.id} className={`item item-${r.status}`}>
                   <div className="item-topo">
@@ -260,7 +302,7 @@ export default function Pagina() {
                     </blockquote>
                   )}
 
-                  {r.status === "ausente" && (
+                  {mostraModelo && (
                     <div className="modelo">
                       <span className="modelo-rotulo">Sugestão de frase (complete os colchetes):</span>
                       <code>{r.item.modelo}</code>
@@ -306,6 +348,49 @@ export default function Pagina() {
                 );
               })}
             </ul>
+
+            {faltantes.length > 0 && (
+              <div className="reescrita">
+                <button
+                  type="button"
+                  className="botao-principal"
+                  onClick={() => sugerirVersao(faltantes)}
+                  disabled={reescrita?.etapa === "carregando"}
+                >
+                  {reescrita?.etapa === "carregando" ? "Gerando versão..." : "Sugerir versão revisada"}
+                </button>
+
+                {reescrita?.etapa === "aviso" && <p className="aviso">{reescrita.mensagem}</p>}
+
+                {reescrita?.etapa === "previa" && (
+                  <div className="previa-lado-a-lado">
+                    <div>
+                      <h3>Original</h3>
+                      <pre>{reescrita.original}</pre>
+                    </div>
+                    <div>
+                      <h3>Sugerido (complete os colchetes)</h3>
+                      <pre>{reescrita.sugerido}</pre>
+                    </div>
+                    <div className="decisao">
+                      <button
+                        type="button"
+                        className="botao-secundario"
+                        onClick={() => {
+                          setTexto(reescrita.sugerido); // substitui a caixa de texto
+                          setReescrita(null);
+                        }}
+                      >
+                        Usar esta versão
+                      </button>
+                      <button type="button" className="botao-link" onClick={() => setReescrita(null)}>
+                        Descartar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </section>
         )}
       </main>

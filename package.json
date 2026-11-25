@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "teste": "tsx scripts/teste.ts"
+    "teste": "tsx scripts/teste.ts",
+    "teste:real": "tsx scripts/teste-real.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.14.0",

@@ -302,3 +302,43 @@ blockquote.riscada {
   font-size: 14px;
   cursor: pointer;
 }
+
+/* "Sugerir versão revisada": botão e prévia lado a lado. */
+.reescrita {
+  margin: 20px 0 0;
+}
+
+.previa-lado-a-lado {
+  margin: 12px 0 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.previa-lado-a-lado h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--azul);
+}
+
+.previa-lado-a-lado pre {
+  margin: 0;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  white-space: pre-wrap; /* quebra linhas longas em vez de rolar */
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.previa-lado-a-lado .decisao {
+  grid-column: 1 / -1;
+}
+
+/* Em telas estreitas, uma coluna embaixo da outra. */
+@media (max-width: 640px) {
+  .previa-lado-a-lado {
+    grid-template-columns: 1fr;
+  }
+}

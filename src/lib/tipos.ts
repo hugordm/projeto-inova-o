@@ -1,11 +1,12 @@
 // Tipos compartilhados entre a análise, a verificação, a rota e a tela.
-// Ficam num arquivo só para que o Passo 2 (IA) use exatamente o mesmo formato.
+// Ficam num arquivo só para que a análise com IA e a sem IA usem exatamente o mesmo formato.
 
 export type Tipo = "digital" | "fisico" | "assinatura";
 
 export const TIPOS: Tipo[] = ["digital", "fisico", "assinatura"];
 
-// "nao_confirmado" nunca vem da análise: só a verificação pode atribuí-lo.
+// "nao_confirmado" nunca vem da análise por palavras-chave. Quem o atribui é a verificação
+// (citação que não existe no texto) e analisarComIA (item que a IA não devolveu).
 export type Status = "respondido" | "ausente" | "ambiguo" | "nao_confirmado";
 
 export type Resposta = {

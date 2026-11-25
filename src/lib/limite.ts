@@ -3,8 +3,11 @@
 // some quando a instância é desligada. A proteção real é o limite de gasto no
 // console da Anthropic (veja o README).
 
+// Contador único: soma os pedidos de /api/revisar e /api/reescrever do mesmo IP.
 export const LIMITE_POR_MINUTO = 10; // pedidos por IP a cada minuto
-export const LIMITE_DIARIO_IA = 300; // chamadas à IA por dia, somando todos
+// Conta PEDIDOS que usam IA, não chamadas: uma revisão com nova tentativa faz 2 chamadas,
+// então 300 pedidos podem chegar a 600 chamadas à IA.
+export const LIMITE_DIARIO_IA = 300; // pedidos com IA por dia, somando todos
 
 const UM_MINUTO = 60_000;
 
@@ -41,7 +44,7 @@ export function registrarPedido(ip: string, agora = Date.now()): ResultadoLimite
   return { ok: true };
 }
 
-// Conta uma chamada à IA no dia (horário UTC). Devolve erro se passou do teto.
+// Conta um pedido que vai usar a IA, no dia (horário UTC). Devolve erro se passou do teto.
 export function registrarUsoIA(agora = Date.now()): ResultadoLimite {
   const dia = new Date(agora).toISOString().slice(0, 10);
   if (dia !== diaAtual) {

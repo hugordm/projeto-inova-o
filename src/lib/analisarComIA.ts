@@ -71,7 +71,7 @@ export const chamarAnthropic: ChamarIA = async (sistema, mensagem, { timeoutMs }
 };
 
 // Impede que o texto do produto "feche" o delimitador e finja ser instrução.
-function protegerDelimitador(texto: string): string {
+export function protegerDelimitador(texto: string): string {
   return texto.replace(/<\/?\s*texto_produto\s*>/gi, "[texto_produto]");
 }
 
