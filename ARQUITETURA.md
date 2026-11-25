@@ -126,31 +126,39 @@ Duas coisas para notar:
 
 ---
 
-## 4. "Usar IA" e "Simular erro da IA"
+## 4. "Usar IA" e "Modo demonstração: simular erro da IA"
+
+Na tela, as duas opções são **mutuamente exclusivas**: marcar a demonstração desmarca e desabilita
+"Usar IA"; marcar "Usar IA" desmarca a demonstração. A restrição é só de `page.tsx`: a API
+(`revisar.ts`) continua aceitando as duas juntas.
 
 ### "Usar IA"
 
 1. Ao abrir a página, `page.tsx` (`useEffect`) faz `GET /api/revisar`.
 2. `api/revisar/route.ts` → `GET` responde `{ iaDisponivel: iaConfigurada() }`. `iaConfigurada`
    (`analisarComIA.ts`) só olha se `ANTHROPIC_API_KEY` e `ANTHROPIC_MODEL` têm valor; nunca devolve os valores.
-3. A tela marca o checkbox se houver IA, ou o desabilita com "(indisponível...)".
-4. No clique em Revisar, `revisar()` manda `modo: usarIA ? "ia" : "sem-ia"`.
+3. A tela marca o checkbox se houver IA, ou o desabilita com "(indisponível...)". Ele também fica
+   desabilitado enquanto o modo demonstração estiver ligado.
+4. No clique em Revisar, `revisar()` manda `modo: usarIA && !simular ? "ia" : "sem-ia"`: com a
+   demonstração ligada, o pedido é sempre sem IA.
 5. Em `revisar.ts`, `querIA = modo !== "sem-ia"`. A IA roda só se `querIA` **e** `iaDisponivel`.
    Se a pessoa quis IA mas ela não está configurada, a resposta vem com `modo: "sem-ia"` e um aviso.
 
 O checkbox não tem efeito no "Sugerir versão revisada": essa rota sempre tenta a IA.
 
-### "Simular erro da IA"
+### "Modo demonstração: simular erro da IA"
 
-1. O checkbox liga `simular` em `page.tsx`, enviado como `simularInvencao: true`.
+1. O checkbox liga `simular` em `page.tsx` (e desliga `usarIA`), enviado como `simularInvencao: true`
+   junto com `modo: "sem-ia"`. Embaixo dele, um texto pequeno explica que não é um erro real e não usa a IA.
 2. Em `revisar.ts`, **depois** da análise (com ou sem IA) e **antes** da verificação, o código
    troca o primeiro item "ausente" por `status: "respondido"` com a frase `CITACAO_INVENTADA`, que
    não existe em nenhum exemplo.
 3. `verificar` (`verificar.ts`) não acha essa frase no texto e muda o status para `nao_confirmado`.
 4. A tela mostra a citação **riscada** (classe `riscada` em `globals.css`).
 
-Serve para demonstrar que a verificação pega uma "alucinação". Apesar do nome, ele funciona também
-no modo sem IA. Se não houver nenhum item "ausente", nada é simulado e a tela não avisa.
+Serve para demonstrar que a verificação pega uma "alucinação", sem gastar crédito: pela tela, a
+demonstração sempre usa a análise por palavras-chave. Chamando a API direto, `simularInvencao` também
+funciona com a IA (teste (g)). Se não houver nenhum item "ausente", nada é simulado e a tela não avisa.
 
 ---
 
@@ -218,7 +226,7 @@ no modo sem IA. Se não houver nenhum item "ausente", nada é simulado e a tela 
 1. **Como vocês impedem a IA de inventar uma citação?**
    Toda evidência passa por `verificar` (`verificar.ts`), que normaliza (minúsculas, sem acento,
    espaços únicos) e exige que o trecho exista no texto. Se não existir, vira `nao_confirmado`.
-   O "Simular erro da IA" e o teste (g) provam isso.
+   O "Modo demonstração: simular erro da IA" e o teste (g) provam isso.
 
 2. **E se a IA devolver algo que não é JSON?**
    `analisarComIA` tenta extrair o JSON (aceita cercas de código), valida com Zod e, se falhar,

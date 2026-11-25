@@ -342,3 +342,14 @@ blockquote.riscada {
     grid-template-columns: 1fr;
   }
 }
+
+/* Opção com texto de ajuda embaixo (modo demonstração). */
+.opcao .checkbox {
+  margin-bottom: 0;
+}
+
+.opcao-ajuda {
+  margin: 2px 0 0 26px; /* alinha com o texto do checkbox */
+  font-size: 13px;
+  color: var(--cinza);
+}

@@ -1,21 +1,52 @@
 # Antes que Perguntem
 
-Protótipo para o Desafio de Inovação (estágio de Desenvolvimento, YouShop).
-Revisa a descrição de um produto **antes de ele ir ao ar** e mostra quais informações
-faltam para o comprador (prazo de acesso, garantia, contato etc.).
+Demonstração online: https://projeto-inova-o-beta.vercel.app/
 
-> Protótipo de demonstração: dados e regras de exemplo. Não é um sistema da YouShop.
+> Protótipo do Desafio de Inovação (YouShop 2027), com dados e regras de exemplo.
+> Não é um sistema da YouShop.
 
-## Como rodar
+## O que o projeto faz
+
+O vendedor cola a descrição de um produto **antes de ele ir ao ar**. O sistema compara o texto com
+uma lista de perguntas que os compradores costumam fazer (prazo de acesso, garantia, contato etc.) e
+mostra o que está respondido, o que está incompleto e o que falta. Para cada lacuna, oferece uma
+frase pronta para completar. Toda citação apontada como prova é conferida no próprio texto, e o que
+não pode ser confirmado é descartado.
+
+## Fontes do checklist
+
+As perguntas do checklist vêm de duas fontes públicas da YouShop (indicadas também em cada item na tela):
+
+- **FAQ da YouShop**: youshop.co/faq, consultado em 24/11/2026.
+- **Blog da YouShop**, artigo "Chargeback: o que é e como reduzir": blog.youshop.co, consultado em 25/11/2026.
+
+As palavras-chave e frases-modelo de cada item são exemplos criados para o protótipo.
+
+## Usar a demonstração online
+
+Abra https://projeto-inova-o-beta.vercel.app/ no navegador. Não precisa instalar nada.
+
+1. Clique em um dos exemplos (produto digital, físico ou assinatura) ou cole uma descrição.
+2. Clique em **Revisar**.
+3. Acima do resultado aparece qual análise foi usada: "Analisado por IA" ou "Análise por
+   palavras-chave". Se a IA não estiver disponível, o checkbox **Usar IA** fica desabilitado.
+4. O **Modo demonstração: simular erro da IA** planta uma citação inventada para mostrar que a
+   verificação a descarta. Ele usa só a análise por palavras-chave e não gasta crédito.
+
+## Rodar no seu computador
 
 Requer Node.js 20.9 ou mais novo.
 
 ```bash
 npm install      # instala as dependências
-npm run dev      # abre em http://localhost:3000
-npm run teste    # roda os testes (imprime PASSOU/FALHOU)
+npm run dev      # servidor local de desenvolvimento em http://localhost:3000
+npm run teste    # roda os testes offline (imprime PASSOU/FALHOU)
 npm run build    # gera a versão de produção
 ```
+
+`http://localhost:3000` é o endereço local de desenvolvimento: só funciona no computador em que o
+`npm run dev` está rodando. Para usar a IA localmente, configure o `.env.local` (seção
+"Usando a IA" abaixo).
 
 ## O que cada arquivo faz
 
@@ -91,7 +122,8 @@ Se a chave ou o modelo faltarem, o sistema usa a análise por palavras-chave e a
 npm run dev
 ```
 
-Abra <http://localhost:3000>. Se a IA estiver configurada, o checkbox **Usar IA** aparece marcado.
+Abra o endereço local de desenvolvimento, <http://localhost:3000>. Se a IA estiver configurada, o
+checkbox **Usar IA** aparece marcado.
 Clique em um exemplo e em **Revisar**: acima do resultado deve aparecer "Analisado por IA".
 Se aparecer o aviso de fallback, veja o terminal: o log mostra só o tipo do erro
 (ex.: `AuthenticationError` = chave errada; `NotFoundError` = nome de modelo errado;

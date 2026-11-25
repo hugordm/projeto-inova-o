@@ -147,7 +147,8 @@ export default function Pagina() {
           tipo,
           texto,
           simularInvencao: simular,
-          modo: usarIA ? "ia" : "sem-ia",
+          // Na tela, IA e demonstração não andam juntas: com a demonstração, sempre sem IA.
+          modo: usarIA && !simular ? "ia" : "sem-ia",
         }),
       });
       const dados = await resp.json();
@@ -239,18 +240,36 @@ export default function Pagina() {
           <label className="checkbox">
             <input
               type="checkbox"
-              checked={usarIA}
-              disabled={!iaDisponivel}
-              onChange={(e) => setUsarIA(e.target.checked)}
+              checked={usarIA && !simular}
+              disabled={!iaDisponivel || simular}
+              onChange={(e) => {
+                setUsarIA(e.target.checked);
+                if (e.target.checked) setSimular(false); // marcar IA desliga a demonstração
+              }}
             />
             Usar IA
             {iaDisponivel === false && " (indisponível: IA não configurada no servidor)"}
+            {iaDisponivel && simular && " (desligada no modo demonstração)"}
           </label>
 
-          <label className="checkbox">
-            <input type="checkbox" checked={simular} onChange={(e) => setSimular(e.target.checked)} />
-            Simular erro da IA (inventar citação)
-          </label>
+          {/* As duas opções são exclusivas só na tela; a API continua aceitando as duas juntas. */}
+          <div className="opcao">
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={simular}
+                onChange={(e) => {
+                  setSimular(e.target.checked);
+                  if (e.target.checked) setUsarIA(false); // demonstração usa palavras-chave, sem gastar crédito
+                }}
+              />
+              Modo demonstração: simular erro da IA
+            </label>
+            <p className="opcao-ajuda">
+              Planta uma citação inventada no resultado para mostrar que a verificação a descarta. Não é um
+              erro real e não usa a IA.
+            </p>
+          </div>
 
           {/* Bloqueado enquanto houver campo de frase-modelo sem preencher (o aviso acima explica). */}
           <button
