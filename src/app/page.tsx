@@ -237,29 +237,43 @@ export default function Pagina() {
             </p>
           )}
 
-          <label className="checkbox">
-            <input
-              type="checkbox"
-              checked={usarIA && !simular}
-              disabled={!iaDisponivel} // só trava se a IA não estiver configurada no servidor
-              onChange={(e) => {
-                setUsarIA(e.target.checked);
-                if (e.target.checked) setSimular(false); // marcar IA desliga a demonstração
-              }}
-            />
-            Usar IA
-            {iaDisponivel === false && " (indisponível: IA não configurada no servidor)"}
-          </label>
-
-          {/* As duas opções são exclusivas só na tela; a API continua aceitando as duas juntas. */}
-          <div className="opcao">
+          {/* As opções são exclusivas só na tela; a API continua aceitando IA e demonstração juntas. */}
+          <fieldset className="opcao">
+            <legend>Como analisar?</legend>
             <label className="checkbox">
               <input
-                type="checkbox"
+                type="radio"
+                name="analise"
+                checked={usarIA && !simular}
+                disabled={!iaDisponivel} // só trava se a IA não estiver configurada no servidor
+                onChange={() => {
+                  setUsarIA(true);
+                  setSimular(false); // escolher IA desliga a demonstração
+                }}
+              />
+              Usar IA
+              {iaDisponivel === false && " (indisponível: IA não configurada no servidor)"}
+            </label>
+            <label className="checkbox">
+              <input
+                type="radio"
+                name="analise"
+                checked={!usarIA && !simular}
+                onChange={() => {
+                  setUsarIA(false);
+                  setSimular(false);
+                }}
+              />
+              Usar palavras-chave (sem IA)
+            </label>
+            <label className="checkbox">
+              <input
+                type="radio"
+                name="analise"
                 checked={simular}
-                onChange={(e) => {
-                  setSimular(e.target.checked);
-                  if (e.target.checked) setUsarIA(false); // demonstração usa palavras-chave, sem gastar crédito
+                onChange={() => {
+                  setSimular(true);
+                  setUsarIA(false); // demonstração usa palavras-chave, sem gastar crédito
                 }}
               />
               Modo demonstração: simular erro da IA
@@ -268,7 +282,7 @@ export default function Pagina() {
               Planta uma citação inventada no resultado para mostrar que a verificação a descarta. Não é um
               erro real e não usa a IA.
             </p>
-          </div>
+          </fieldset>
 
           {/* Bloqueado enquanto houver campo de frase-modelo sem preencher (o aviso acima explica). */}
           <button

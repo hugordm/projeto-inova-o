@@ -348,6 +348,19 @@ blockquote.riscada {
   margin-bottom: 0;
 }
 
+/* Tira a moldura padrão do navegador no grupo de opções. */
+fieldset.opcao {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+fieldset.opcao legend {
+  padding: 0;
+  margin-bottom: 4px;
+}
+
 .opcao-ajuda {
   margin: 2px 0 0 26px; /* alinha com o texto do checkbox */
   font-size: 13px;
